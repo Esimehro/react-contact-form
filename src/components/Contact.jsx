@@ -1,5 +1,6 @@
 import {React, useState} from 'react'
 import axios from 'axios'
+import { nanoid } from 'nanoid'
 import {
     FormControl,
     FormLabel,
@@ -11,7 +12,6 @@ import {
     AlertIcon,
     // FormErrorMessage, 
 } from '@chakra-ui/react'
-
 
 
 export const Contact = () => {
@@ -26,6 +26,7 @@ export const Contact = () => {
     const[errors, setErrors]= useState({})
     const [error, setNewError]= useState(false)
     const [submit, setSubmit] = useState(false)
+    const [clear, setClear] = useState([])
 
 
     const handleChange = (e)=>{
@@ -71,7 +72,8 @@ export const Contact = () => {
             lastName: value.lastName,
             email: value.email,
             subject: value.subject,
-            message: value.message
+            message: value.message,
+            id: nanoid()
         }
 
         axios.post('https://my-json-server.typicode.com/tundeojediran/contacts-api-server/inquiries', newData)
@@ -80,6 +82,14 @@ export const Contact = () => {
             setNewError(false)
             setErrors(false)
             setSubmit(true)
+            setClear([...clear, value])
+            setValue({
+                firstName: '',
+                lastName: '',
+                email: '',
+                subject: '',
+                message: ''
+            })
         })
         .catch((error)=>{
             console.log(error)
@@ -103,7 +113,7 @@ export const Contact = () => {
                {submit && (
                <Alert status='success' marginBottom={'30px'} color={'green'}>
                  {/* <AlertIcon /> */}
-                 There was an error processing your request
+                 Your form has been submitted successfully
                 </Alert>
                )}
                {error && (
@@ -116,20 +126,20 @@ export const Contact = () => {
                     <FormControl className='name-section'>
                        <FormLabel className='label'>Firstname</FormLabel>
                        <Input className='input-field' type='text' name='firstName' onChange={handleChange}  value={value.firstName}/>
-                       {errors.firstName && <FormHelperText>{errors.firstName}</FormHelperText>}
+                       {errors.firstName && <FormHelperText color={'red'}>{errors.firstName}</FormHelperText>}
                     </FormControl>
 
                     <FormControl>
                        <FormLabel className='label'>Lastname</FormLabel>
                        <Input className='input-field' type='text'  name='lastName' onChange={handleChange} value={value.lastName}/>
-                       {errors.lastName && <FormHelperText>{errors.lastName}</FormHelperText>}
+                       {errors.lastName && <FormHelperText  color={'red'}>{errors.lastName}</FormHelperText>}
                     </FormControl>
                 </div>
 
                 <FormControl className='section'>
                    <FormLabel className='label'>Email</FormLabel>
                    <Input className='section-input' type='email'  name='email' onChange={handleChange} value={value.email}/>
-                   {errors.email && <FormHelperText>{errors.email}</FormHelperText>}
+                   {errors.email && <FormHelperText  color={'red'}>{errors.email}</FormHelperText>}
                 </FormControl>
 
                 <FormControl className='section'>
@@ -140,7 +150,7 @@ export const Contact = () => {
                 <FormControl className='section'>
                     <FormLabel className='label'>Message</FormLabel>
                     <Textarea className='message' rows="6" cols="59" type='text'  name='message' onChange={handleChange} value={value.message}/>
-                    {errors.message && <FormHelperText>{errors.message}</FormHelperText>}
+                    {errors.message && <FormHelperText  color={'red'}>{errors.message}</FormHelperText>}
                 </FormControl>
 
                 <Button className='btn' type='submit'>Submit</Button>
